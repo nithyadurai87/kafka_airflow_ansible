@@ -1,0 +1,10 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Update apt
+      apt: update_cache=yes
+
+    - name: Install mysql
+      apt: name=mysql-client state=latest
+
+

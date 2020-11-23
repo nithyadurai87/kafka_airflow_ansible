@@ -1,0 +1,30 @@
+- hosts: all
+  vars:
+    url: "https://downloads.apache.org/kafka/2.5.0/kafka_2.12-2.5.0.tgz"
+  become: true
+  tasks:
+
+    - name: kafka steps
+      shell:
+        cmd: mkdir kafka_test
+        cmd: mkdir /opt/kafka_test
+        cmd: rmdir kafka_test
+        cmd: cd /opt/kafka_test
+        cmd: wget "{{url}}"
+        cmd: tar -xzf kafka_2.12-2.5.0.tgz
+        cmd: cd kafka_2.12-2.5.0/config/
+        cmd: echo "listeners=PLAINTEXT://localhost:9092" >> server.properties
+      notify:
+        - start services
+        - stop services
+
+  handlers:
+    - name: start services
+      shell:
+        cmd: /opt/kafka_test/kafka_2.12-2.5.0/bin/zookeeper-server-start.sh /opt/kafka_test/kafka_2.12-2.5.0/config/zookeeper.properties &
+    - name: stop services
+      shell:
+        cmd: exit
+
+
+

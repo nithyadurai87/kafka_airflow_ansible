@@ -1,0 +1,29 @@
+- hosts: all
+  become: true
+  tasks:
+
+    - name: create directory
+      file: state=directory path=kafka_test
+      file: state=directory path=/opt/kafka_test
+
+    - name: delete directory
+      file: state=absent path=kafka_test
+
+    - name: Download kafka
+      get_url:
+        url: https://downloads.apache.org/kafka/2.5.0/kafka_2.12-2.5.0.tgz
+        dest: /opt/kafka_test/
+
+    - name: Extract archive
+      unarchive: 
+        src: /opt/kafka_test/kafka_2.12-2.5.0.tgz
+        dest: /opt/kafka_test
+        remote_src: yes
+
+    - name: Edit config file
+      lineinfile:
+        path: /opt/kafka_test/kafka_2.12-2.5.0/config/server.properties
+        line: listeners=PLAINTEXT://localhost:9092
+        insertbefore: BOF
+
+
